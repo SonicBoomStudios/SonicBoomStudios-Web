@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sonicboom Studios</title>
+  <title>Sonicboom Studios Inc.</title>
   <style>
     :root {
       --bg-main: #03060a;
@@ -373,6 +373,134 @@
       color: rgba(255,255,255,0.7);
     }
 
+    /* ── Contact Modal ── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(7,17,31,0.95);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 1.5rem;
+      padding: 36px 32px 32px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+      transform: translateY(24px) scale(0.97);
+      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+      position: relative;
+    }
+    .modal-backdrop.open .modal {
+      transform: translateY(0) scale(1);
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.6);
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .modal-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 8px;
+    }
+    .modal-title {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #fff;
+      margin-bottom: 24px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 7px;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 0.75rem;
+      padding: 12px 14px;
+      color: rgba(255,255,255,0.9);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      resize: none;
+      box-sizing: border-box;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.08);
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: rgba(255,255,255,0.25); }
+    .form-submit {
+      width: 100%;
+      margin-top: 8px;
+      padding: 14px;
+      border-radius: 0.75rem;
+      border: none;
+      background: #fff;
+      color: #03060a;
+      font-size: 12px;
+      font-family: inherit;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, opacity 0.2s;
+    }
+    .form-submit:hover { background: rgba(255,255,255,0.88); }
+    .form-submit:disabled { opacity: 0.5; cursor: default; }
+    .form-feedback {
+      margin-top: 14px;
+      font-size: 13px;
+      text-align: center;
+      min-height: 20px;
+      color: rgba(255,255,255,0.6);
+    }
+    .form-feedback.success { color: #6ee7b7; }
+    .form-feedback.error { color: #fca5a5; }
+
     .hint {
       position: absolute;
       z-index: 25;
@@ -655,7 +783,7 @@
       .footer { left: 40px; right: 40px; bottom: 40px; }
     }
 
-    @media (max-width: 200px) {
+    @media (max-width: 767px) {
       .loader-stage { gap: 1.6rem; }
       .loader-particle-shell { width: min(92vw, 560px); }
       .loader-logo-wrap { width: 88%; }
@@ -673,10 +801,9 @@
     <div id="pageShell" class="page-shell hidden">
       <header class="header">
         <div>
-          <div class="eyebrow">Studio identity</div>
-          <div class="brand">SONICBOOM STUDIOS</div>
+          <div class="brand">SONICBOOM STUDIOS INC.</div>
         </div>
-        <div class="desktop-only pill">Scroll to navigate</div>
+        <button class="desktop-only pill" id="contactBtn" style="cursor:pointer;">Contact Us</button>
       </header>
 
       <main class="main-stage" id="mainStage"></main>
@@ -685,7 +812,6 @@
         <div class="copy-wrap">
           <div class="tag-row">
             <div class="tag-pill" id="slideTag">01</div>
-            <div class="tag-label">Image-only motion system</div>
           </div>
 
           <div id="copyBlock" class="copy-enter">
@@ -694,11 +820,6 @@
           </div>
         </div>
 
-        <div class="desktop-only info-card">
-          <div class="info-icon" id="infoIcon">⚡</div>
-          <div class="info-title">Current frame</div>
-          <div class="info-copy">A scroll-driven gallery built entirely from motion graphics so preview works reliably.</div>
-        </div>
       </div>
 
       <footer class="footer">
@@ -712,7 +833,36 @@
       <div id="hint" class="hint">Use mouse wheel, swipe, or arrow keys</div>
     </div>
 
-    
+
+<!-- Contact Modal -->
+    <div id="contactModal" class="modal-backdrop">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <button class="modal-close" id="modalClose" aria-label="Close">&#x2715;</button>
+        <div class="modal-eyebrow">Sonicboom Studios Inc.</div>
+        <div class="modal-title" id="modalTitle">Get In Touch</div>
+        <form id="contactForm">
+          <div class="form-group">
+            <label for="cf-name">Name</label>
+            <input id="cf-name" name="name" type="text" placeholder="Your name" required />
+          </div>
+          <div class="form-group">
+            <label for="cf-email">Email</label>
+            <input id="cf-email" name="email" type="email" placeholder="your@email.com" required />
+          </div>
+          <div class="form-group">
+            <label for="cf-subject">Subject</label>
+            <input id="cf-subject" name="subject" type="text" placeholder="What's this about?" required />
+          </div>
+          <div class="form-group">
+            <label for="cf-message">Message</label>
+            <textarea id="cf-message" name="message" rows="5" placeholder="Tell us more..." required></textarea>
+          </div>
+          <button type="submit" class="form-submit" id="formSubmit">Send Message</button>
+          <div class="form-feedback" id="formFeedback"></div>
+        </form>
+      </div>
+    </div>
+
     <div id="loader" class="loader visible">
       <div class="loader-bg"></div>
       <div class="loader-glow"></div>
@@ -725,8 +875,7 @@
         </div>
 
         <div class="loader-copy">
-          <div class="loader-kicker">Preparing launch sequence</div>
-          <div class="loader-title">SONIC BOOM STUDIOS</div>
+          <div class="loader-title">SonicBoom Studios Inc.</div>
           <div class="loader-dots">
             <span></span><span></span><span></span>
           </div>
@@ -740,31 +889,37 @@
 
     const slides = [
       {
-        title: "Shockwave",
-        subtitle: "Speed visualized as identity.",
+        title: "Sky Dynasty",
+        subtitle: "Sky Dynasty is a single-player airplane racing action game in which players pilot and customize aircraft through dangerous routes while climbing a competitive ladder to become the top racer with the best-performing plane. Set in an underground aerial racing world shaped by rival pilots, pursuit, and a hidden supernatural threat, the game centers on two core mechanics: aircraft performance modification and high-risk rival races. Players adjust how their aircraft handles by balancing speed, stability, responsiveness, and recovery, then take that machine into increasingly demanding events. The main objective is to climb the racing ladder, defeat major rivals, and survive the escalating dangers surrounding the circuit by combining preparation, route mastery, and fast decision-making.",
         tag: "01",
         icon: "⚡",
+        image: "images/skydynasty_frame.png",
         accent: "linear-gradient(135deg, rgba(34,211,238,0.30), rgba(59,130,246,0.20), transparent 72%)",
         glow: "rgba(103,232,249,0.25)",
         band: "linear-gradient(90deg, #67e8f9, #3b82f6, #4f46e5)",
+        accentRGB: [103, 232, 249],
       },
       {
-        title: "Velocity",
-        subtitle: "Frames built like sonic pressure.",
-        tag: "02",
-        icon: "✈",
-        accent: "linear-gradient(135deg, rgba(167,139,250,0.25), rgba(217,70,239,0.20), transparent 72%)",
-        glow: "rgba(196,181,253,0.25)",
-        band: "linear-gradient(90deg, #a78bfa, #d946ef, #ec4899)",
-      },
-      {
-        title: "Frequency",
+        title: "Whispers Of Steel",
         subtitle: "A studio language tuned for impact.",
-        tag: "03",
+        tag: "02",
         icon: "◉",
+        image: "images/whispersofsteel_frame.png",
         accent: "linear-gradient(135deg, rgba(252,211,77,0.25), rgba(249,115,22,0.20), transparent 72%)",
         glow: "rgba(253,230,138,0.20)",
         band: "linear-gradient(90deg, #fcd34d, #f97316, #ef4444)",
+        accentRGB: [253, 200, 80],
+      },
+      {
+        title: "Starlight Heavens",
+        subtitle: "Frames built like sonic pressure.",
+        tag: "03",
+        icon: "✈",
+        image: "images/starlightheavens_frame.png",
+        accent: "linear-gradient(135deg, rgba(167,139,250,0.25), rgba(217,70,239,0.20), transparent 72%)",
+        glow: "rgba(196,181,253,0.25)",
+        band: "linear-gradient(90deg, #a78bfa, #d946ef, #ec4899)",
+        accentRGB: [196, 140, 255],
       },
       {
         title: "Afterburn",
@@ -774,23 +929,10 @@
         accent: "linear-gradient(135deg, rgba(110,231,183,0.25), rgba(20,184,166,0.20), transparent 72%)",
         glow: "rgba(167,243,208,0.20)",
         band: "linear-gradient(90deg, #6ee7b7, #14b8a6, #06b6d4)",
+        accentRGB: [110, 231, 183],
       },
     ];
 
-    const LOADER_PARTICLES = Array.from({ length: 84 }, (_, i) => {
-      const angle = (i / 84) * Math.PI * 2;
-      const radius = 180 + (i % 7) * 22;
-      return {
-        id: i,
-        spreadX: Math.cos(angle) * radius,
-        spreadY: Math.sin(angle) * radius * 0.62,
-        driftX: Math.cos(angle * 1.7) * (260 + (i % 5) * 30),
-        driftY: Math.sin(angle * 1.35) * (180 + (i % 6) * 26),
-        size: 4 + (i % 4) * 1.8,
-        delay: (i % 14) * 0.08,
-        duration: 4.8 + (i % 6) * 0.18,
-      };
-    });
 
     const mainStage = document.getElementById('mainStage');
     const pageShell = document.getElementById('pageShell');
@@ -799,7 +941,6 @@
     const slideTag = document.getElementById('slideTag');
     const slideTitle = document.getElementById('slideTitle');
     const slideSubtitle = document.getElementById('slideSubtitle');
-    const infoIcon = document.getElementById('infoIcon');
     const progress = document.getElementById('progress');
     const copyBlock = document.getElementById('copyBlock');
     const loaderLogo = document.getElementById('loaderLogo');
@@ -807,19 +948,510 @@
 
     loaderLogo.src = LOGO_SRC;
 
-    LOADER_PARTICLES.forEach((particle) => {
-      const dot = document.createElement('span');
-      dot.className = 'loader-particle';
-      dot.style.width = `${particle.size}px`;
-      dot.style.height = `${particle.size}px`;
-      dot.style.animationDelay = `${particle.delay}s`;
-      dot.style.animationDuration = `${particle.duration}s`;
-      dot.style.setProperty('--sx', `${particle.spreadX}px`);
-      dot.style.setProperty('--sy', `${particle.spreadY}px`);
-      dot.style.setProperty('--dx', `${particle.driftX}px`);
-      dot.style.setProperty('--dy', `${particle.driftY}px`);
-      loaderParticles.appendChild(dot);
-    });
+    // ── Layered Particle System ──
+    (function () {
+      const loaderEl = document.getElementById('loader');
+      const cvs = document.createElement('canvas');
+      cvs.setAttribute('aria-hidden', 'true');
+      cvs.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;';
+      loaderEl.appendChild(cvs);
+      const ctx = cvs.getContext('2d');
+
+      let W = 0, H = 0, CX = 0, CY = 0, booted = false;
+
+      function resize() {
+        W = cvs.width  = loaderEl.offsetWidth  || window.innerWidth;
+        H = cvs.height = loaderEl.offsetHeight || window.innerHeight;
+        CX = W / 2; CY = H / 2;
+      }
+      resize();
+      window.addEventListener('resize', () => { resize(); booted = false; });
+
+      // ── Colour palette (cycles over 16 s) ──
+      const PAL = [
+        [ 40, 110, 255],  // electric blue
+        [ 70, 185, 255],  // sky
+        [120, 225, 255],  // cyan
+        [ 55, 145, 235],  // ocean
+        [100, 170, 255],  // periwinkle
+        [ 30,  90, 220],  // deep navy
+      ];
+      function mix(a, b, f) {
+        return [a[0]+(b[0]-a[0])*f, a[1]+(b[1]-a[1])*f, a[2]+(b[2]-a[2])*f];
+      }
+      function palCol(t) {
+        const ct = (t % 16) / 16;
+        const ci = Math.floor(ct * PAL.length);
+        return mix(PAL[ci % PAL.length], PAL[(ci+1) % PAL.length], (ct * PAL.length) % 1);
+      }
+
+      // ── Flow-field (curl-noise approximation) ──
+      // Returns [vx, vy] direction at pixel (x,y) at time t (seconds)
+      function field(x, y, t) {
+        const s = 0.0032, s2 = 0.0018;
+        const vx =  Math.sin(y * s  + t * 0.38) + 0.55 * Math.sin(x * s2 + t * 0.22)
+                  + 0.28 * Math.cos((x + y) * s2 * 0.7 + t * 0.14);
+        const vy =  Math.cos(x * s  + t * 0.31) + 0.55 * Math.cos(y * s2 + t * 0.26)
+                  + 0.28 * Math.sin((x - y) * s2 * 0.7 + t * 0.19);
+        return [vx, vy];
+      }
+
+      // ── LAYER 1 — Background star-field (360 tiny fixed points) ──
+      const STARS = Array.from({length: 360}, () => ({
+        nx: Math.random(), ny: Math.random(),
+        r:  Math.random() * 1.1 + 0.25,
+        a0: Math.random() * 0.45 + 0.12,
+        tw: Math.random() * Math.PI * 2,
+        ts: Math.random() * 1.2 + 0.4,
+      }));
+
+      // ── LAYER 2 — Flow-field particles with velocity trails (480) ──
+      function makeFlow() {
+        return {
+          x: Math.random(), y: Math.random(),   // normalised; converted in boot()
+          vx: 0, vy: 0,
+          r:   Math.pow(Math.random(), 1.8) * 2.8 + 0.6,
+          a0:  Math.random() * 0.55 + 0.18,
+          spd: Math.random() * 0.9 + 0.35,
+          hist: [],
+          hLen: Math.floor(Math.random() * 10 + 5),
+          delay: Math.random() * 2000,           // staggered start (ms)
+          hShift: (Math.random() - 0.5) * 40,
+        };
+      }
+      const FLOW = Array.from({length: 480}, makeFlow);
+
+      // ── LAYER 3 — Large glowing orbs (42) ──
+      function makeOrb() {
+        const ang = Math.random() * Math.PI * 2;
+        const rn  = Math.pow(Math.random(), 0.45) * 0.48;
+        return {
+          bx: 0.5 + Math.cos(ang) * rn * 0.88,
+          by: 0.5 + Math.sin(ang) * rn * 0.72,
+          r:  Math.random() * 16 + 8,
+          a0: Math.random() * 0.42 + 0.14,
+          oR: Math.random() * 65 + 20,           // orbit radius px
+          oS: (Math.random() * 0.28 + 0.08) * (Math.random() < 0.5 ? 1 : -1),
+          oP: Math.random() * Math.PI * 2,
+          pS: Math.random() * 1.1 + 0.35,        // pulse speed
+          pP: Math.random() * Math.PI * 2,
+          hShift: (Math.random() - 0.5) * 55,
+        };
+      }
+      const ORBS = Array.from({length: 42}, makeOrb);
+
+      // ── Nebula fog patches — large blurred gradient clouds for depth ──
+      const NEBULA = Array.from({length: 9}, () => ({
+        nx:     Math.random(),
+        ny:     Math.random(),
+        r:      Math.random() * 160 + 90,   // radius px
+        a0:     Math.random() * 0.055 + 0.018,
+        dx:     (Math.random() - 0.5) * 7,  // drift px/s
+        dy:     (Math.random() - 0.5) * 4.5,
+        hShift: (Math.random() - 0.5) * 70,
+        pP:     Math.random() * Math.PI * 2,
+        pS:     Math.random() * 0.15 + 0.04,
+      }));
+
+      // ── Shockwave rings ──
+      const RINGS = [];
+      let lastRing = -9999;
+      const RING_INTERVAL = 3400;
+
+      // ── First-frame boot: convert normalised coords to px ──
+      function boot() {
+        FLOW.forEach(p => { p.x = p.x * W; p.y = p.y * H; p.hist = []; });
+        booted = true;
+      }
+
+      // ── Main render loop ──
+      function frame(ts) {
+        requestAnimationFrame(frame);
+        if (!W || !H) return;
+        if (!booted) boot();
+
+        const t   = ts * 0.001;
+        const col = palCol(t);
+        const [cr, cg, cb] = col.map(Math.round);
+        const MIND = Math.min(W, H);
+
+        // Fade trail — dark tint matching loader background
+        ctx.fillStyle = 'rgba(2,4,10,0.20)';
+        ctx.fillRect(0, 0, W, H);
+
+        // ── Nebula fog ─────────────────────────────────────────
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        NEBULA.forEach(n => {
+          const nx  = ((n.nx * W + t * n.dx) % W + W) % W;
+          const ny  = ((n.ny * H + t * n.dy) % H + H) % H;
+          const pls = 0.62 + 0.38 * Math.sin(t * n.pS + n.pP);
+          const a   = n.a0 * pls;
+          const r   = Math.min(255, Math.max(0, cr + n.hShift * 0.50)) | 0;
+          const g   = Math.min(255, Math.max(0, cg + n.hShift * 0.28)) | 0;
+          const b   = Math.min(255, Math.max(0, cb + n.hShift * 0.10)) | 0;
+          const gd  = ctx.createRadialGradient(nx, ny, 0, nx, ny, n.r);
+          gd.addColorStop(0,   `rgba(${r},${g},${b},${a})`);
+          gd.addColorStop(0.55,`rgba(${r},${g},${b},${a * 0.28})`);
+          gd.addColorStop(1,    'rgba(0,0,0,0)');
+          ctx.beginPath();
+          ctx.arc(nx, ny, n.r, 0, Math.PI * 2);
+          ctx.fillStyle = gd;
+          ctx.fill();
+        });
+        ctx.restore();
+
+        // ── Stars ──────────────────────────────────────────────
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        STARS.forEach(s => {
+          const tw = 0.5 + 0.5 * Math.sin(t * s.ts + s.tw);
+          ctx.beginPath();
+          ctx.arc(s.nx * W, s.ny * H, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(185,215,255,${s.a0 * tw})`;
+          ctx.fill();
+        });
+        ctx.restore();
+
+        // ── Flow field particles ───────────────────────────────
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        FLOW.forEach(p => {
+          if (ts < p.delay) return;
+
+          const [fx, fy] = field(p.x, p.y, t);
+          p.vx = p.vx * 0.86 + fx * p.spd * 0.14;
+          p.vy = p.vy * 0.86 + fy * p.spd * 0.14;
+          p.x += p.vx;
+          p.y += p.vy;
+
+          // Seamless wrap
+          if (p.x < -12) p.x = W + 12;
+          else if (p.x > W + 12) p.x = -12;
+          if (p.y < -12) p.y = H + 12;
+          else if (p.y > H + 12) p.y = -12;
+
+          p.hist.push({x: p.x, y: p.y});
+          if (p.hist.length > p.hLen) p.hist.shift();
+
+          // Distance-based brightness
+          const dd = Math.hypot(p.x - CX, p.y - CY);
+          const bf = Math.max(0.08, 1 - dd / (MIND * 0.7));
+
+          const r = Math.min(255, Math.max(0, cr + p.hShift * 0.5)) | 0;
+          const g = Math.min(255, Math.max(0, cg + p.hShift * 0.25)) | 0;
+          const b = Math.min(255, Math.max(0, cb + p.hShift * 0.1)) | 0;
+
+          // Velocity trail
+          if (p.hist.length > 1) {
+            for (let i = 1; i < p.hist.length; i++) {
+              const prog  = i / p.hist.length;
+              const ta    = prog * prog * p.a0 * bf * 0.28;
+              const prev  = p.hist[i - 1];
+              const cur   = p.hist[i];
+              ctx.beginPath();
+              ctx.moveTo(prev.x, prev.y);
+              ctx.lineTo(cur.x, cur.y);
+              ctx.strokeStyle = `rgba(${r},${g},${b},${ta})`;
+              ctx.lineWidth   = p.r * prog;
+              ctx.stroke();
+            }
+          }
+
+          // Glowing head (additive radial)
+          const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
+          glow.addColorStop(0,    `rgba(255,255,255,${p.a0 * bf * 0.85})`);
+          glow.addColorStop(0.25, `rgba(${r},${g},${b},${p.a0 * bf * 0.55})`);
+          glow.addColorStop(1,    `rgba(${r},${g},${b},0)`);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+          ctx.fillStyle = glow;
+          ctx.fill();
+        });
+        ctx.restore();
+
+        // ── Large orbs ────────────────────────────────────────
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ORBS.forEach(o => {
+          const ox = Math.cos(t * o.oS + o.oP) * o.oR;
+          const oy = Math.sin(t * o.oS * 0.65 + o.oP) * o.oR * 0.6;
+          const x  = o.bx * W + ox;
+          const y  = o.by * H + oy;
+          const pulse = 0.62 + 0.38 * Math.sin(t * o.pS + o.pP);
+          const sz    = o.r * (0.88 + 0.12 * pulse);
+          const alpha = o.a0 * pulse;
+
+          const dd = Math.hypot(x - CX, y - CY);
+          const bf = Math.max(0.1, 1 - dd / (MIND * 0.75));
+
+          const r = Math.min(255, Math.max(0, cr + o.hShift * 0.55)) | 0;
+          const g = Math.min(255, Math.max(0, cg + o.hShift * 0.28)) | 0;
+          const b = Math.min(255, Math.max(0, cb + o.hShift * 0.1)) | 0;
+
+          const gd = ctx.createRadialGradient(
+            x - sz * 0.3, y - sz * 0.3, 0,
+            x, y, sz * 3
+          );
+          gd.addColorStop(0,    `rgba(255,255,255,${alpha * bf * 0.92})`);
+          gd.addColorStop(0.18, `rgba(${r},${g},${b},${alpha * bf * 0.75})`);
+          gd.addColorStop(0.55, `rgba(${(r*0.5)|0},${(g*0.5)|0},${(b*0.5)|0},${alpha * bf * 0.22})`);
+          gd.addColorStop(1,    'rgba(0,0,0,0)');
+          ctx.beginPath();
+          ctx.arc(x, y, sz * 3, 0, Math.PI * 2);
+          ctx.fillStyle = gd;
+          ctx.fill();
+        });
+        ctx.restore();
+
+        // ── Shockwave rings ────────────────────────────────────
+        if (ts - lastRing > RING_INTERVAL) {
+          RINGS.push({born: ts, maxR: MIND * 0.55});
+          lastRing = ts;
+        }
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        for (let i = RINGS.length - 1; i >= 0; i--) {
+          const rng = RINGS[i];
+          const age = (ts - rng.born) * 0.001;
+          const rad = age * rng.maxR * 0.82;
+          const a   = Math.max(0, 0.55 * (1 - age / 2.8));
+          if (a <= 0) { RINGS.splice(i, 1); continue; }
+
+          // Sharp inner ring
+          ctx.beginPath();
+          ctx.arc(CX, CY, rad, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(${cr},${cg},${cb},${a})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          // Soft outer halo ring
+          ctx.beginPath();
+          ctx.arc(CX, CY, rad + 5, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(${cr},${cg},${cb},${a * 0.25})`;
+          ctx.lineWidth = 10;
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        // ── Central breathing halo (behind logo, additive) ────
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        const hPulse = 0.72 + 0.28 * Math.sin(t * 0.55);
+        const haloR  = MIND * 0.34 * hPulse;
+        const halo   = ctx.createRadialGradient(CX, CY, 0, CX, CY, haloR);
+        halo.addColorStop(0,   `rgba(${cr},${cg},${cb},${0.14 * hPulse})`);
+        halo.addColorStop(0.5, `rgba(${cr},${cg},${cb},${0.04 * hPulse})`);
+        halo.addColorStop(1,    'rgba(0,0,0,0)');
+        ctx.fillStyle = halo;
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+      }
+
+      requestAnimationFrame(frame);
+    })();
+
+    // ── Page Background Particle System ──────────────────────────────────────
+    // Runs behind the main page (page-shell), reacts to slide accent colours.
+    (function () {
+      const site = document.querySelector('.site');
+      const cvs  = document.createElement('canvas');
+      cvs.setAttribute('aria-hidden', 'true');
+      cvs.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;';
+      site.insertBefore(cvs, site.firstChild);
+      const ctx = cvs.getContext('2d');
+
+      let W = 0, H = 0, CX = 0, CY = 0;
+      function resize() {
+        W = cvs.width  = window.innerWidth;
+        H = cvs.height = window.innerHeight;
+        CX = W / 2; CY = H / 2;
+      }
+      resize();
+      window.addEventListener('resize', () => { resize(); bgBooted = false; });
+
+      // Slide-reactive accent colour — lerped on every frame
+      let curAcc = [40, 110, 255];
+      let tgtAcc = [40, 110, 255];
+      window._bgSetAccent = function (rgb) { tgtAcc = rgb; };
+
+      // ── Stars (220) ──
+      const STARS = Array.from({length: 220}, () => ({
+        nx: Math.random(), ny: Math.random(),
+        r:  Math.random() * 1.0 + 0.2,
+        a0: Math.random() * 0.28 + 0.07,
+        tw: Math.random() * Math.PI * 2,
+        ts: Math.random() * 1.0 + 0.3,
+      }));
+
+      // ── Flow particles (160) ──
+      const FLOW = Array.from({length: 160}, () => ({
+        x: Math.random(), y: Math.random(),
+        vx: 0, vy: 0,
+        r:   Math.pow(Math.random(), 1.8) * 1.6 + 0.4,
+        a0:  Math.random() * 0.18 + 0.05,
+        spd: Math.random() * 0.55 + 0.18,
+        hist: [],
+        hLen: Math.floor(Math.random() * 7 + 3),
+        delay: Math.random() * 2500,
+        hShift: (Math.random() - 0.5) * 45,
+      }));
+
+      // ── Large orbs (14) ──
+      const ORBS = Array.from({length: 14}, () => {
+        const ang = Math.random() * Math.PI * 2;
+        const rn  = Math.pow(Math.random(), 0.5) * 0.5;
+        return {
+          bx: 0.5 + Math.cos(ang) * rn,
+          by: 0.5 + Math.sin(ang) * rn * 0.7,
+          r:  Math.random() * 55 + 28,
+          a0: Math.random() * 0.055 + 0.015,
+          oR: Math.random() * 90 + 35,
+          oS: (Math.random() * 0.12 + 0.03) * (Math.random() < 0.5 ? 1 : -1),
+          oP: Math.random() * Math.PI * 2,
+          pS: Math.random() * 0.4 + 0.15,
+          pP: Math.random() * Math.PI * 2,
+        };
+      });
+
+      // ── Nebula patches (6) ──
+      const NEBULA = Array.from({length: 6}, () => ({
+        nx:  Math.random(), ny: Math.random(),
+        r:   Math.random() * 200 + 120,
+        a0:  Math.random() * 0.032 + 0.010,
+        dx:  (Math.random() - 0.5) * 5,
+        dy:  (Math.random() - 0.5) * 3.5,
+        hShift: (Math.random() - 0.5) * 55,
+        pP:  Math.random() * Math.PI * 2,
+        pS:  Math.random() * 0.10 + 0.03,
+      }));
+
+      let bgBooted = false;
+      function boot() {
+        FLOW.forEach(p => { p.x = p.x * W; p.y = p.y * H; p.hist = []; });
+        bgBooted = true;
+      }
+
+      function field(x, y, t) {
+        const s = 0.0028, s2 = 0.0015;
+        const vx = Math.sin(y * s + t * 0.30) + 0.5 * Math.sin(x * s2 + t * 0.17);
+        const vy = Math.cos(x * s + t * 0.26) + 0.5 * Math.cos(y * s2 + t * 0.21);
+        return [vx, vy];
+      }
+
+      function bgFrame(ts) {
+        requestAnimationFrame(bgFrame);
+        if (!W || !H) return;
+        if (!bgBooted) boot();
+
+        const t = ts * 0.001;
+
+        // Lerp towards slide accent over ~2 s
+        curAcc = curAcc.map((c, i) => c + (tgtAcc[i] - c) * 0.012);
+        const [cr, cg, cb] = curAcc.map(Math.round);
+
+        // Transparent clear — body gradient stays visible beneath
+        ctx.clearRect(0, 0, W, H);
+
+        // ── Nebula fog ──
+        NEBULA.forEach(n => {
+          const nx  = ((n.nx * W + t * n.dx) % W + W) % W;
+          const ny  = ((n.ny * H + t * n.dy) % H + H) % H;
+          const pls = 0.6 + 0.4 * Math.sin(t * n.pS + n.pP);
+          const a   = n.a0 * pls;
+          const r   = Math.min(255, Math.max(0, cr + n.hShift * 0.45)) | 0;
+          const g   = Math.min(255, Math.max(0, cg + n.hShift * 0.25)) | 0;
+          const b   = Math.min(255, Math.max(0, cb + n.hShift * 0.08)) | 0;
+          const gd  = ctx.createRadialGradient(nx, ny, 0, nx, ny, n.r);
+          gd.addColorStop(0,    `rgba(${r},${g},${b},${a})`);
+          gd.addColorStop(0.55, `rgba(${r},${g},${b},${a * 0.22})`);
+          gd.addColorStop(1,     'rgba(0,0,0,0)');
+          ctx.beginPath();
+          ctx.arc(nx, ny, n.r, 0, Math.PI * 2);
+          ctx.fillStyle = gd;
+          ctx.fill();
+        });
+
+        // ── Stars ──
+        STARS.forEach(s => {
+          const tw = 0.45 + 0.55 * Math.sin(t * s.ts + s.tw);
+          ctx.beginPath();
+          ctx.arc(s.nx * W, s.ny * H, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(185,215,255,${s.a0 * tw})`;
+          ctx.fill();
+        });
+
+        // ── Flow particles ──
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        FLOW.forEach(p => {
+          if (ts < p.delay) return;
+
+          const [fx, fy] = field(p.x, p.y, t);
+          p.vx = p.vx * 0.88 + fx * p.spd * 0.12;
+          p.vy = p.vy * 0.88 + fy * p.spd * 0.12;
+          p.x  += p.vx;
+          p.y  += p.vy;
+
+          if (p.x < -10) p.x = W + 10; else if (p.x > W + 10) p.x = -10;
+          if (p.y < -10) p.y = H + 10; else if (p.y > H + 10) p.y = -10;
+
+          p.hist.push({x: p.x, y: p.y});
+          if (p.hist.length > p.hLen) p.hist.shift();
+
+          const r = Math.min(255, Math.max(0, cr + p.hShift * 0.5)) | 0;
+          const g = Math.min(255, Math.max(0, cg + p.hShift * 0.25)) | 0;
+          const b = Math.min(255, Math.max(0, cb + p.hShift * 0.08)) | 0;
+
+          // Trail
+          if (p.hist.length > 1) {
+            for (let i = 1; i < p.hist.length; i++) {
+              const prog = i / p.hist.length;
+              ctx.beginPath();
+              ctx.moveTo(p.hist[i-1].x, p.hist[i-1].y);
+              ctx.lineTo(p.hist[i].x,   p.hist[i].y);
+              ctx.strokeStyle = `rgba(${r},${g},${b},${prog * prog * p.a0 * 0.22})`;
+              ctx.lineWidth   = p.r * prog * 0.7;
+              ctx.stroke();
+            }
+          }
+
+          // Glowing head
+          const gd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4.5);
+          gd.addColorStop(0,   `rgba(255,255,255,${p.a0 * 0.75})`);
+          gd.addColorStop(0.3, `rgba(${r},${g},${b},${p.a0 * 0.45})`);
+          gd.addColorStop(1,    'rgba(0,0,0,0)');
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r * 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = gd;
+          ctx.fill();
+        });
+        ctx.restore();
+
+        // ── Large orbs ──
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ORBS.forEach(o => {
+          const ox    = Math.cos(t * o.oS + o.oP) * o.oR;
+          const oy    = Math.sin(t * o.oS * 0.65 + o.oP) * o.oR * 0.55;
+          const x     = o.bx * W + ox;
+          const y     = o.by * H + oy;
+          const pulse = 0.58 + 0.42 * Math.sin(t * o.pS + o.pP);
+          const alpha = o.a0 * pulse;
+          const gd    = ctx.createRadialGradient(x, y, 0, x, y, o.r * 2.8);
+          gd.addColorStop(0,   `rgba(${cr},${cg},${cb},${alpha * 0.85})`);
+          gd.addColorStop(0.45,`rgba(${cr},${cg},${cb},${alpha * 0.20})`);
+          gd.addColorStop(1,    'rgba(0,0,0,0)');
+          ctx.beginPath();
+          ctx.arc(x, y, o.r * 2.8, 0, Math.PI * 2);
+          ctx.fillStyle = gd;
+          ctx.fill();
+        });
+        ctx.restore();
+      }
+
+      requestAnimationFrame(bgFrame);
+    })();
 
     let index = 0;
     let direction = 1;
@@ -842,7 +1474,6 @@
       slideTag.textContent = active.tag;
       slideTitle.textContent = active.title;
       slideSubtitle.textContent = active.subtitle;
-      infoIcon.textContent = active.icon;
 
       copyBlock.className = `copy-enter ${direction > 0 ? '' : 'copy-down'}`;
       copyBlock.offsetHeight;
@@ -868,32 +1499,46 @@
         rings.appendChild(ring);
       });
 
-      const parts = [
-        ['slide-bg', slide.accent],
-        ['slide-floaters', 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1), transparent 18%), radial-gradient(circle at 80% 30%, rgba(255,255,255,0.08), transparent 16%), radial-gradient(circle at 50% 80%, rgba(255,255,255,0.08), transparent 14%)'],
-      ];
+      if (!slide.image) {
+        const parts = [
+          ['slide-bg', slide.accent],
+          ['slide-floaters', 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1), transparent 18%), radial-gradient(circle at 80% 30%, rgba(255,255,255,0.08), transparent 16%), radial-gradient(circle at 50% 80%, rgba(255,255,255,0.08), transparent 14%)'],
+        ];
+        parts.forEach(([cls, bg]) => {
+          const div = document.createElement('div');
+          div.className = cls;
+          div.style.background = bg;
+          el.appendChild(div);
+        });
+      }
 
-      parts.forEach(([cls, bg]) => {
-        const div = document.createElement('div');
-        div.className = cls;
-        div.style.background = bg;
-        el.appendChild(div);
-      });
+      if (slide.image) {
+        const img = document.createElement('img');
+        img.src = slide.image;
+        img.alt = slide.title;
+        img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;pointer-events:none;';
+        el.appendChild(img);
+      }
 
-      el.appendChild(glow);
-      el.appendChild(rings);
+      if (!slide.image) {
+        el.appendChild(glow);
+        el.appendChild(rings);
 
-      const beamAEl = document.createElement('div');
-      beamAEl.className = 'slide-beam-a';
-      beamAEl.style.background = slide.band;
-      el.appendChild(beamAEl);
+        const beamAEl = document.createElement('div');
+        beamAEl.className = 'slide-beam-a';
+        beamAEl.style.background = slide.band;
+        el.appendChild(beamAEl);
 
-      const beamBEl = document.createElement('div');
-      beamBEl.className = 'slide-beam-b';
-      beamBEl.style.background = slide.band;
-      el.appendChild(beamBEl);
+        const beamBEl = document.createElement('div');
+        beamBEl.className = 'slide-beam-b';
+        beamBEl.style.background = slide.band;
+        el.appendChild(beamBEl);
+      }
 
-      ['slide-noise', 'slide-scan', 'slide-v1', 'slide-v2', 'slide-v3'].forEach((cls) => {
+      (slide.image
+        ? ['slide-v1', 'slide-v2', 'slide-v3']
+        : ['slide-noise', 'slide-scan', 'slide-v1', 'slide-v2', 'slide-v3']
+      ).forEach((cls) => {
         const div = document.createElement('div');
         div.className = cls;
         el.appendChild(div);
@@ -907,6 +1552,10 @@
       mainStage.appendChild(buildSlide(slides[index], direction));
       renderCopy();
       renderProgress();
+      // Push slide accent colour into the background particle field
+      if (window._bgSetAccent && slides[index].accentRGB) {
+        window._bgSetAccent(slides[index].accentRGB);
+      }
     }
 
     function goTo(dir) {
@@ -931,6 +1580,8 @@
     }, { passive: true });
 
     window.addEventListener('keydown', (event) => {
+      const tag = document.activeElement.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
       if (['ArrowDown', 'PageDown', ' '].includes(event.key)) {
         event.preventDefault();
         goTo(1);
@@ -982,6 +1633,64 @@
         window.addEventListener('load', finish, { once: true });
       }
     }
+
+// ── Contact Modal ──
+    // To activate email delivery:
+    // 1. Go to https://formspree.io and sign up free
+    // 2. Create a new form pointed at dedpulr6s@gmail.com
+    // 3. Replace 'YOUR_FORM_ID' below with the ID they give you (e.g. "xabcdefg")
+    const FORMSPREE_ID = 'mnjwpwqw';
+
+    const contactModal = document.getElementById('contactModal');
+    const contactBtn   = document.getElementById('contactBtn');
+    const modalClose   = document.getElementById('modalClose');
+    const contactForm  = document.getElementById('contactForm');
+    const formSubmit   = document.getElementById('formSubmit');
+    const formFeedback = document.getElementById('formFeedback');
+
+    function openModal() { contactModal.classList.add('open'); }
+    function closeModal() {
+      contactModal.classList.remove('open');
+      formFeedback.textContent = '';
+      formFeedback.className = 'form-feedback';
+      contactForm.reset();
+      formSubmit.disabled = false;
+      formSubmit.textContent = 'Send Message';
+    }
+
+    contactBtn.addEventListener('click', openModal);
+    modalClose.addEventListener('click', closeModal);
+    contactModal.addEventListener('click', (e) => { if (e.target === contactModal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      formSubmit.disabled = true;
+      formSubmit.textContent = 'Sending...';
+      formFeedback.textContent = '';
+      formFeedback.className = 'form-feedback';
+
+      try {
+        const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(contactForm),
+        });
+        if (res.ok) {
+          formFeedback.textContent = "Message sent! We'll be in touch soon.";
+          formFeedback.className = 'form-feedback success';
+          contactForm.reset();
+          formSubmit.textContent = 'Sent ✓';
+        } else {
+          throw new Error('Server error');
+        }
+      } catch {
+        formFeedback.textContent = 'Something went wrong. Please try again.';
+        formFeedback.className = 'form-feedback error';
+        formSubmit.disabled = false;
+        formSubmit.textContent = 'Send Message';
+      }
+    });
 
     renderSlide();
     startLoader();
